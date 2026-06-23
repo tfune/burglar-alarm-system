@@ -3,11 +3,8 @@
 #include <wiringPi.h>
 #include <pcf8574.h>
 #include <lcd.h>
-#include <string>
 #include <ADCDevice.hpp>
 #include "Keypad.hpp"
-
-using namespace std;
 
 // GPIO Pin Numbers (WiringPi)
 const int LED_PIN = 2;
@@ -15,7 +12,10 @@ const int BUZZER_PIN = 3;
 const int PIR_PIN = 0;
 
 // Timing
-const unsigned int ADC_READ_INTERMAL_MS = 1000;
+const unsigned int ADC_READ_INTERVAL_MS = 1000;
+const unsigned int LCD_STARTUP_DELAY_MS = 100;
+const unsigned int LCD_RETRY_DELAY_MS = 500;
+const int LCD_INIT_ATTEMPTS = 3;
 const unsigned int MAIN_LOOP_DELAY_MS = 50;
 
 // Keypad Setup
@@ -63,7 +63,11 @@ unsigned int lastADCReadTime = 0;
 int main()
 {
 	// initialize wiringPi
-	wiringPiSetup();
+	if (wiringPiSetup() == -1)
+	{
+		std::cout << "wiringPi setup failed" << std::endl;
+		return 1;
+	}
 	
 	// Keypad Setup
 	char key = 0;
@@ -88,13 +92,25 @@ int main()
 	digitalWrite(LCD_BACKLIGHT, HIGH);
 	digitalWrite(RW, LOW);
 	
-	delay(100);
+	delay(LCD_STARTUP_DELAY_MS);
 	
-	lcdHandle = lcdInit(2, 16, 4, RS, EN, D4, D5, D6, D7, 0, 0, 0, 0);
+	lcdHandle = -1;
+	
+	for (int attempt = 0; attempt < LCD_INIT_ATTEMPTS; attempt++)
+	{
+		lcdHandle = lcdInit(2, 16, 4, RS, EN, D4, D5, D6, D7, 0, 0, 0, 0);
+		
+		if (lcdHandle != -1)
+		{
+			break;
+		}
+		
+		delay (LCD_RETRY_DELAY_MS);
+	}
 	
 	if (lcdHandle == -1)
 	{
-		cout << "LCD Init Failed" << endl;
+		std::cout << "LCD Init Failed" << std::endl;
 		return 1;
 	}
 	
@@ -125,6 +141,10 @@ int main()
 		{
 			systemArmed = false;
 			
+			tempAlarm = false;
+			baselineSet = false;
+			baselineADC = 0;
+			
 			lcdPosition(lcdHandle, 0, 1);
 			lcdPuts(lcdHandle, "DISARMED");
 		}
@@ -132,8 +152,8 @@ int main()
 		// Read Motion Sensor
 		int motionDetected = digitalRead(PIR_PIN);
 		
-		// Read Temperature Every Second
-		if (currentTime - lastADCReadTime >= 1000)
+		// Read Temperature Every Second if Armed
+		if (systemArmed && currentTime - lastADCReadTime >= ADC_READ_INTERVAL_MS)
 		{
 			lastADCReadTime = currentTime;
 			
@@ -163,7 +183,7 @@ int main()
 			digitalWrite(LED_PIN, LOW);
 		}
 		
-		delay(50);
+		delay(MAIN_LOOP_DELAY_MS);
 	}
 	
 	return 0;
