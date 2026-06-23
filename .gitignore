@@ -1,5 +1,11 @@
+# Build outputs
 burglar_alarm
 *.o
 *.out
+
+# Logs / Temporary Files
 *.log
+*.save
+
+# System Files
 .DS_Store
