@@ -39,15 +39,16 @@ Watch the full project demonstration showing system arming, motion detection, te
 
 ### System Overview
 
-*Add system overview image*
+![System Overview](images/system_overview.jpg)
+
 
 ### Armed State
 
-*Add LCD armed image*
+![Armed State](images/armed_state.jpg)
 
-### Disarmed State
+### Close-Up View
 
-*Add LCD disarmed image*
+![Close-Up View](images/close_up.jpg)
 
 ### System Architecture Diagram
 
