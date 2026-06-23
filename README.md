@@ -29,7 +29,7 @@ This project was developed to demonstrate core embedded systems concepts includi
 
 ### YouTube Demonstration
 
-*Add YouTube link here*
+[Link to Demonstration Video](https://youtu.be/phs9qyAsqX4)
 
 Watch the full project demonstration showing system arming, motion detection, temperature alarm activation, and LCD status updates.
 
