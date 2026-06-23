@@ -1,8 +1,15 @@
-main: main.cpp Keypad.cpp
-	g++ main.cpp Keypad.cpp Key.cpp -o burglar_alarm -lwiringPi -lwiringPiDev -lADCDevice
+CXX = g++
+CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
+LDFLAGS = -lwiringPi -lwiringPiDev -lADCDevice
 
-run: burglar_alarm
-	sudo ./burglar_alarm
+SRC = src/main.cpp src/Key.cpp src/Keypad.cpp
+OUT = burglar_alarm
+
+all:
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(OUT) $(LDFLAGS)
+
+run: all
+	sudo ./$(OUT)
 
 clean:
-	rm -f burglar_alarm
+	rm -f $(OUT)
