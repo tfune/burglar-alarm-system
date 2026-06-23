@@ -1,0 +1,5 @@
+burglar_alarm
+*.o
+*.out
+*.log
+.DS_Store
