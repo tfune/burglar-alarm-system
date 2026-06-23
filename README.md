@@ -51,7 +51,7 @@ Watch the full project demonstration showing system arming, motion detection, te
 
 ### System Architecture Diagram
 
-*Add block diagram*
+![System Architecture](docs/block-diagram.png)
 
 ---
 
